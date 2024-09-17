@@ -15,7 +15,6 @@ function SegmentPage() {
   const [segmentName, setSegmentName] = useState('');
   const [schemas, setSchemas] = useState([]);
   const [availableOptions, setAvailableOptions] = useState(options);
-  const [selectedOptions, setSelectedOptions] = useState([]);
 
   const handleSaveSegmentClick = () => {
     setIsPopupOpen(true);
@@ -30,11 +29,12 @@ function SegmentPage() {
   };
 
   const handleSchemaChange = (index, value) => {
-    
     const newSchemas = [...schemas];
     newSchemas[index] = value;
-    console.log(newSchemas);
     setSchemas(newSchemas);
+    console.log(value);
+    setAvailableOptions(availableOptions.filter(option => option.value !== value));
+    
   };
 
   const handleAddNewSchema = () => {
@@ -43,10 +43,11 @@ function SegmentPage() {
       setSchemas([...schemas, newOption.value]);
       setAvailableOptions(availableOptions.filter(option => option.value !== newOption.value));
     }
+    
   };
+  
 
   const handleSaveData = () => {
-    // Example data format
     const data = {
       segmentName,
       schemas: schemas.map(value => ({ value }))
@@ -55,7 +56,7 @@ function SegmentPage() {
     console.log('Data to be sent to the server:', data);
 
     // TODO: Send data to the server using fetch or axios
-    // fetch('/api/save-segment', {
+    // fetch('https://webhook.site/1f3c5189-7c9b-457e-a588-546e9bf164d0', {
     //   method: 'POST',
     //   headers: { 'Content-Type': 'application/json' },
     //   body: JSON.stringify(data)
@@ -69,13 +70,14 @@ function SegmentPage() {
 
   return (
     <div>
-      <button onClick={handleSaveSegmentClick}>Save segment</button>
+      <button className='startbutton' onClick={handleSaveSegmentClick}>Save segment</button>
 
       {isPopupOpen && (
         <div className="popup">
           <div className="popup-content">
             <button className="close" onClick={handlePopupClose}>X</button>
             <input
+              className='segmentname'
               type="text"
               value={segmentName}
               onChange={handleSegmentNameChange}
@@ -84,6 +86,7 @@ function SegmentPage() {
             <div>
               <label>Add schema to segment:</label>
               <select
+                className='dropdown'
                 onChange={(e) => handleSchemaChange(e.target.selectedIndex, e.target.value)}
                 defaultValue=""
               >
@@ -96,11 +99,13 @@ function SegmentPage() {
             </div>
 
             <div className="schemas-list">
-              {schemas.map((schema, index) => (
-                <div key={index} className="schema">
+              {schemas.map((z, index) => (
+                
+                <div key={index+1} className="schema">
                   <select
-                    value={schema}
-                    onChange={(e) => handleSchemaChange(index, e.target.value)}
+                    className='dropdown'
+                    value={z}
+                    onChange={(e) => handleSchemaChange(index+1, e.target.value)}
                   >
                     {availableOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
